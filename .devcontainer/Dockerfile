@@ -1,33 +1,25 @@
-# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/python-3/.devcontainer/base.Dockerfile
+ARG PYTHON_VERSION="3.7.11-slim"
+FROM python:${PYTHON_VERSION}
+RUN  apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install gcc libgmp3-dev curl git zsh -y \
+    #&& apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    #&& apt-get -y install --no-install-recommends gcc libgmp3-dev \
+    && apt-get clean
 
-# [Choice] Python version (use -bullseye variants on local arm64/Apple Silicon): 3, 3.10, 3.9, 3.8, 3.7, 3.6, 3-bullseye, 3.10-bullseye, 3.9-bullseye, 3.8-bullseye, 3.7-bullseye, 3.6-bullseye, 3-buster, 3.10-buster, 3.9-buster, 3.8-buster, 3.7-buster, 3.6-buster
-ARG VARIANT="3.7-bullseye"
-FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
+COPY .p10k.zsh /root/.p10k.zsh
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" \
+    && git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k \
+    && echo 'source ~/.p10k.zsh' >> ~/.zshrc \
+    && echo 'source ~/powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 
-# [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
-ARG NODE_VERSION="none"
-RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
-# [Optional] If your pip requirements rarely change, uncomment this section to add them to the image.
-# COPY requirements.txt /tmp/pip-tmp/
-# RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-#    && rm -rf /tmp/pip-tmp
-
-# [Optional] Uncomment this section to install additional OS packages.
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends libgmp3-dev
-
-# [Optional] Uncomment this line to install global node packages.
-# RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && npm install -g <your-package-here>" 2>&1
-
-#python code formatter
-RUN python -m pip install -U autopep8
+WORKDIR /app
 
 # cairo prerequisites
-RUN pip3 install ecdsa fastecdsa sympy
+ARG CAIRO_VERSION
+RUN pip3 install ecdsa fastecdsa sympy pylint cairo-lang 
+#==${CAIRO_VERSION}
 
-#install Cairo-lang package
-RUN pip3 install cairo-lang
-ENV STARKNET_NETWORK alpha-goerli
+ENV STARKNET_NETWORK alpha-goerli 
 
 # install and init cairo-nile
 RUN pip install cairo-nile
