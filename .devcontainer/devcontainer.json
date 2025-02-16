@@ -9,11 +9,11 @@
 			// Update 'VARIANT' to pick a Python version: 3, 3.10, 3.9, 3.8, 3.7, 3.6
 			// Append -bullseye or -buster to pin to an OS version.
 			// Use -bullseye variants on local on arm64/Apple Silicon.
-			//"VARIANT": "3.7-bullseye",
-			"PYTHON_VERSION": "3.7.11-slim",
-			"CAIRO_VERSION": "0.7.0", //"0.6.2",
+			//"VARIANT": "3.10-bullseye",
+			"PYTHON_VERSION": "3.10.8-slim",
+			"CAIRO_VERSION": "0.10.0",
 			// Options
-			"NODE_VERSION": "16"
+			"NODE_VERSION": "18"
 		}
 	},
 	// Set *default* container specific settings.json values on container create.
@@ -42,7 +42,9 @@
 		"ms-python.python",
 		"ms-python.vscode-pylance",
 		"starkware.cairo",
-		"ericglau.cairo-ls"
+		"ericglau.cairo-ls",
+		"ms-azuretools.vscode-docker",
+		"esbenp.prettier-vscode"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
